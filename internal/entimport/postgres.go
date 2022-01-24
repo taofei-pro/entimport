@@ -29,7 +29,7 @@ func NewPostgreSQL(i *ImportOptions) (SchemaImporter, error) {
 }
 
 // SchemaMutations implements SchemaImporter.
-func (p *Postgres) SchemaMutations(ctx context.Context) ([]schemast.Mutator, error) {
+func (p *Postgres) SchemaMutations(ctx context.Context, annotationTableName bool) ([]schemast.Mutator, error) {
 	inspectOptions := &schema.InspectOptions{
 		Tables: p.tables,
 	}
@@ -37,7 +37,7 @@ func (p *Postgres) SchemaMutations(ctx context.Context) ([]schemast.Mutator, err
 	if err != nil {
 		return nil, err
 	}
-	return schemaMutations(p.field, s.Tables)
+	return schemaMutations(p.field, s.Tables, annotationTableName)
 }
 
 func (p *Postgres) field(column *schema.Column) (f ent.Field, err error) {

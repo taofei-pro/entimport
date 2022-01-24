@@ -11,6 +11,7 @@ import (
 	"entgo.io/contrib/schemast"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"github.com/go-openapi/inflect"
 )
@@ -41,7 +42,7 @@ type (
 	// SchemaImporter is the interface that wraps the SchemaMutations method.
 	SchemaImporter interface {
 		// SchemaMutations imports a given schema from a data source and returns a list of schemast mutators.
-		SchemaMutations(context.Context) ([]schemast.Mutator, error)
+		SchemaMutations(context.Context, bool) ([]schemast.Mutator, error)
 	}
 
 	// ImportOptions are the options passed on to every SchemaImporter.
@@ -307,7 +308,7 @@ func applyColumnAttributes(f ent.Field, col *schema.Column) {
 }
 
 // schemaMutations is in charge of creating all the schema mutations needed for an ent schema.
-func schemaMutations(field fieldFunc, tables []*schema.Table) ([]schemast.Mutator, error) {
+func schemaMutations(field fieldFunc, tables []*schema.Table, annotationTableName bool) ([]schemast.Mutator, error) {
 	mutations := make(map[string]schemast.Mutator)
 	joinTables := make(map[string]*schema.Table)
 	for _, table := range tables {
@@ -318,6 +319,9 @@ func schemaMutations(field fieldFunc, tables []*schema.Table) ([]schemast.Mutato
 		node, err := upsertNode(field, table)
 		if err != nil {
 			return nil, err
+		}
+		if annotationTableName {
+			node.Annotations = []schema.Annotation{entsql.Annotation{Table: table.Name}}
 		}
 		mutations[table.Name] = node
 	}

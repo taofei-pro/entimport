@@ -24,6 +24,7 @@ func main() {
 "mysql://user:pass@tcp(localhost:3306)/dbname"
 "postgres://user:pass@host:port/dbname"`)
 	schemaPath := flag.String("schema-path", "./ent/schema", "output path for ent schema")
+	annotationTableName := flag.Bool("annotation-table-name", false, "whether annotation table name")
 	flag.Parse()
 	if *dsn == "" {
 		log.Println("entimport: data source name (dsn) must be provided")
@@ -42,7 +43,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("entimport: create importer failed: %v", err)
 	}
-	mutations, err := i.SchemaMutations(ctx)
+	mutations, err := i.SchemaMutations(ctx, annotationTableName)
 	if err != nil {
 		log.Fatalf("entimport: schema import failed - %v", err)
 	}

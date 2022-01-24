@@ -33,7 +33,7 @@ func NewMySQL(i *ImportOptions) (*MySQL, error) {
 }
 
 // SchemaMutations implements SchemaImporter.
-func (m *MySQL) SchemaMutations(ctx context.Context) ([]schemast.Mutator, error) {
+func (m *MySQL) SchemaMutations(ctx context.Context, annotationTableName bool) ([]schemast.Mutator, error) {
 	inspectOptions := &schema.InspectOptions{
 		Tables: m.tables,
 	}
@@ -41,7 +41,7 @@ func (m *MySQL) SchemaMutations(ctx context.Context) ([]schemast.Mutator, error)
 	if err != nil {
 		return nil, err
 	}
-	return schemaMutations(m.field, s.Tables)
+	return schemaMutations(m.field, s.Tables, annotationTableName)
 }
 
 func (m *MySQL) field(column *schema.Column) (f ent.Field, err error) {
