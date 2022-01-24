@@ -1,4 +1,4 @@
-module ariga.io/entimport
+module taofei-pro/entimport
 
 go 1.17
 
