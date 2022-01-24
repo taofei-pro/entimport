@@ -1,4 +1,4 @@
-module taofei-pro/entimport
+module github.com/taofei-pro/entimport
 
 go 1.17
 
